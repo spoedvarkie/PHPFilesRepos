@@ -14,7 +14,7 @@ if($_SERVER['REQUEST_METHOD'] == 'POST')
 							   $_POST['email'],$_POST['username'],$_POST['password']))
 			{
 				$response['error'] = false;
-				$response['message'] = "User registration unsuccessful.";
+				$response['message'] = "User registration successful.";
 			}
 			else
 			{

@@ -32,7 +32,8 @@ class DBOperations
 	}
 	
 	function userLogin($username,$passw)
-	{	//made 2 methods to verify login recommend using 1st
+	{	
+		//made 2 methods to verify login recommend using 1st
 		//1st method
 		session_start();
 		
@@ -45,26 +46,31 @@ class DBOperations
 			//echo "\nusername " .$username;
 			try
 			{
-				$qry = $this->conn->prepare("SELECT USERNAME,U_PASSWORD 
+				$qryLogin = $this->conn->prepare("SELECT USERNAME,U_PASSWORD 
 											 FROM 'user'
 											 WHERE username = ? AND U_PASSWORD = ?;");
-				$qry->bind_param($username,$passw);		
+				$qryLogin->bind_param($username,$passw);		
 		
-				$qry->execute();
+				$qryLogin->execute();
 			
-				$userID = $qry->fetchColumn();
+				$userID = $qryLogin->fetchColumn();
 		
 				if($userID == false)
+				{
 					$message = "Login Failed";
+					return false;
+				}	
 				else
 				{                    
 					$_SESSION['userID'] = $userID;                    
 					$message = 'You are now logged in';
+					return true;
 				}
 			}
 			catch(Exception $e)//unable to access db most probably
 			{            
 				$message = 'Unexpected error. Please try again later.';
+				return false;
 			}
 		echo @message;
 		
@@ -89,5 +95,42 @@ class DBOperations
 		//}
 		//else
 		//	echo "Wrong username"
+	}
+
+	function getTextbook($textBookID)
+	{
+		//first get book details
+		$qryTxtBook = $this->conn->prepare("SELECT * 
+											FROM 'textbook' 
+											WHERE 'TEXTBOOK_ID'=?;");
+		$qryTxtBook->bind_param($textBookID);
+		
+		while ($Bookrows = mysql_fetch_array($qryTxtBook))
+		{
+			$title = $Bookrows['TEXTBOOK_TITLE'];
+			$ed = $Bookrows['TEXTBOOK_EDITION'];
+			$isbn = $Bookrows['TEXTBOOK_ISBN'];
+			$price = $Bookrows['TEXTBOOK_PRICE'];
+			$comment = $Bookrows['TEXTBOOK_COMMENTS'];
+			$userID = $Bookrows['USER_ID'];
+			
+			//echo "$TEXTBOOK_TITLE$<br>$TEXTBOOK_EDITION<br>$TEXTBOOK_ISBN<br>$TEXTBOOK_PRICE<br>$TEXTBOOK_COMMENTS<br><br>";	
+
+			
+			//get details of user that added book
+			$qryUser = $this->conn->prepare("SELECT 'FIRST_NAME','LAST_NAME','CONTACT_NUM','EMAIL' 
+											FROM 'USER' 
+											WHERE 'USER_ID'=?;");
+			$qryUser->bind_param($textBookID);
+			
+			$Userrows = mysql_fetch_array($qryUser);
+			
+			$first_name = $Userrows['FIRST_NAME'];
+			$last_name = $Userrows['LAST_NAME'];
+			$contact_num = $Userrows['CONTAC_NUM'];
+			$email = $Userrows['EMAIL'];
+				
+			//echo "$FIRST_NAME$<br>$LAST_NAME<br>$CONTACT_NUM<br>$EMAIL<br><br>";								
+		}			
 	}
 }

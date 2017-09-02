@@ -5,14 +5,14 @@ $responce = array();
 
 if($_SERVER['REQUEST_METHOD'] == 'POST')
 {
-	if(isset($_POST['username']) and isset($_POST['password']))
+	if(isset($_POST['textBookID']))
 	{
 		$db = new DBOperations();
 		
-		if($db->userLogin($_POST['username'],$_POST['password']))
+		if($db->getTextbook($_POST['textBookID']))
 			{
 				$response['error'] = false;
-				$response['message'] = "User log in succeded.";
+				$response['message'] = "Textbook found";
 			}
 			else
 			{
