@@ -31,7 +31,7 @@ else
 	$result['error'] = true;
 	$result['message'] = "Request is invalid";
 }
-echo json_encode($response);
+echo json_encode($result);
 
 //place in DBOperations 
 function getAdvert($textBookID)
